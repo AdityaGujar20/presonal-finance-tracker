@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1><i class="fas fa-wallet"></i> Personal Finance Tracker</h1>
+                    <p>Track expenses, visualize spending, and get AI-powered financial advice</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="dashboard">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </button>
+            <button class="tab-btn" data-tab="add-transaction">
+                <i class="fas fa-plus"></i> Add Transaction
+            </button>
+            <button class="tab-btn" data-tab="transactions">
+                <i class="fas fa-list"></i> Transactions
+            </button>
+            <button class="tab-btn" data-tab="comparison">
+                <i class="fas fa-chart-bar"></i> Comparison
+            </button>
+            <button class="tab-btn" data-tab="ai-advisor">
+                <i class="fas fa-robot"></i> AI Advisor
+            </button>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <!-- Dashboard Filters -->
+            <div class="dashboard-filters">
+                <div class="filter-section">
+                    <h3><i class="fas fa-filter"></i> Filter Dashboard</h3>
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label for="dashboard-year">Year</label>
+                            <select id="dashboard-year">
+                                <option value="">All Years</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="dashboard-month">Month</label>
+                            <select id="dashboard-month">
+                                <option value="">All Months</option>
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <button id="apply-filters" class="btn-filter">
+                            <i class="fas fa-search"></i> Apply Filters
+                        </button>
+                        <button id="reset-filters" class="btn-filter-secondary">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card income">
+                    <div class="metric-icon"><i class="fas fa-arrow-up"></i></div>
+                    <div class="metric-info">
+                        <h3>Total Income</h3>
+                        <p class="metric-value" id="total-income">₹0.00</p>
+                    </div>
+                </div>
+                <div class="metric-card expense">
+                    <div class="metric-icon"><i class="fas fa-arrow-down"></i></div>
+                    <div class="metric-info">
+                        <h3>Total Expenses</h3>
+                        <p class="metric-value" id="total-expenses">₹0.00</p>
+                    </div>
+                </div>
+                <div class="metric-card balance">
+                    <div class="metric-icon"><i class="fas fa-balance-scale"></i></div>
+                    <div class="metric-info">
+                        <h3>Net Balance</h3>
+                        <p class="metric-value" id="net-balance">₹0.00</p>
+                    </div>
+                </div>
+                <div class="metric-card savings">
+                    <div class="metric-icon"><i class="fas fa-piggy-bank"></i></div>
+                    <div class="metric-info">
+                        <h3>Savings Rate</h3>
+                        <p class="metric-value" id="savings-rate">0%</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="section-header">
+                        <h3><i class="fas fa-chart-pie"></i> Expenses by Category</h3>
+                        <span class="section-subtitle">Where your money goes</span>
+                    </div>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="section-header">
+                        <h3><i class="fas fa-chart-line"></i> Monthly Spending Trend</h3>
+                        <span class="section-subtitle">Track your spending over time</span>
+                    </div>
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="recent-transactions">
+                <div class="section-header">
+                    <h3><i class="fas fa-clock"></i> Recent Transactions</h3>
+                    <span class="section-subtitle">Your latest financial activity</span>
+                </div>
+                <div id="recent-transactions-list"></div>
+            </div>
+        </div>
+
+        <!-- Add Transaction Tab -->
+        <div id="add-transaction" class="tab-content">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2><i class="fas fa-plus-circle"></i> Add New Transaction</h2>
+                    <p>Track your income and expenses to better manage your finances</p>
+                </div>
+                <form id="transaction-form">
+                    <div class="form-section">
+                        <h3>Transaction Details</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="date"><i class="fas fa-calendar"></i> Date</label>
+                                <input type="date" id="date" name="date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="amount"><i class="fas fa-rupee-sign"></i> Amount</label>
+                                <input type="number" id="amount" name="amount" min="0.01" step="0.01" required placeholder="Enter amount">
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group" id="category-group">
+                                <label for="category"><i class="fas fa-tags"></i> Category</label>
+                                <select id="category" name="category" required>
+                                    <option value="">Choose a category</option>
+                                    <option value="🍔 Food & Dining">🍔 Food & Dining</option>
+                                    <option value="🚗 Transportation">🚗 Transportation</option>
+                                    <option value="🛒 Shopping">🛒 Shopping</option>
+                                    <option value="🏠 Housing">🏠 Housing</option>
+                                    <option value="💡 Utilities">💡 Utilities</option>
+                                    <option value="🎬 Entertainment">🎬 Entertainment</option>
+                                    <option value="🏥 Healthcare">🏥 Healthcare</option>
+                                    <option value="📚 Education">📚 Education</option>
+                                    <option value="💼 Business">💼 Business</option>
+                                    <option value="🎁 Gifts">🎁 Gifts</option>
+                                    <option value="💰 Investment">💰 Investment</option>
+                                    <option value="🏦 Banking">🏦 Banking</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="type"><i class="fas fa-exchange-alt"></i> Type</label>
+                                <select id="type" name="type" required>
+                                    <option value="Expense">💸 Expense</option>
+                                    <option value="Income">💰 Income</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3>Additional Information</h3>
+                        <div class="form-group">
+                            <label for="description"><i class="fas fa-sticky-note"></i> Description (Optional)</label>
+                            <textarea id="description" name="description" placeholder="Add notes about this transaction..." rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Transaction
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Comparison Tab -->
+        <div id="comparison" class="tab-content">
+            <div class="comparison-header">
+                <h2><i class="fas fa-chart-bar"></i> Spending Comparison</h2>
+                <p>Compare spending patterns between different time periods</p>
+            </div>
+
+            <!-- Comparison Mode Toggle -->
+            <div class="comparison-mode-toggle">
+                <div class="toggle-section">
+                    <h3><i class="fas fa-toggle-on"></i> Comparison Mode</h3>
+                    <div class="toggle-buttons">
+                        <button id="monthly-mode" class="toggle-btn active">
+                            <i class="fas fa-calendar-alt"></i> Monthly Comparison
+                        </button>
+                        <button id="yearly-mode" class="toggle-btn">
+                            <i class="fas fa-calendar"></i> Yearly Comparison
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comparison-charts-grid">
+                <!-- First Chart -->
+                <div class="comparison-chart-container">
+                    <div class="chart-header">
+                        <h3>Period 1</h3>
+                        <div class="chart-filters">
+                            <div class="filter-group">
+                                <label for="chart1-year">Year</label>
+                                <select id="chart1-year">
+                                    <option value="">Select Year</option>
+                                </select>
+                            </div>
+                            <div class="filter-group monthly-only">
+                                <label for="chart1-month">Month</label>
+                                <select id="chart1-month">
+                                    <option value="">Select Month</option>
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
+                            <button id="update-chart1" class="btn-update-chart">
+                                <i class="fas fa-sync"></i> Update
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="comparisonChart1"></canvas>
+                        <div id="chart1-summary" class="chart-summary"></div>
+                    </div>
+                </div>
+
+                <!-- Second Chart -->
+                <div class="comparison-chart-container">
+                    <div class="chart-header">
+                        <h3>Period 2</h3>
+                        <div class="chart-filters">
+                            <div class="filter-group">
+                                <label for="chart2-year">Year</label>
+                                <select id="chart2-year">
+                                    <option value="">Select Year</option>
+                                </select>
+                            </div>
+                            <div class="filter-group monthly-only">
+                                <label for="chart2-month">Month</label>
+                                <select id="chart2-month">
+                                    <option value="">Select Month</option>
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
+                            <button id="update-chart2" class="btn-update-chart">
+                                <i class="fas fa-sync"></i> Update
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="comparisonChart2"></canvas>
+                        <div id="chart2-summary" class="chart-summary"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Summary -->
+            <div class="comparison-summary">
+                <div class="section-header">
+                    <h3><i class="fas fa-analytics"></i> Comparison Summary</h3>
+                    <span class="section-subtitle">Key insights from your spending comparison</span>
+                </div>
+                <div id="comparison-insights" class="insights-content">
+                    <p>Select periods for both charts to see comparison insights.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Tab -->
+        <div id="transactions" class="tab-content">
+            <div class="transactions-header">
+                <div>
+                    <h2><i class="fas fa-list"></i> Transaction History</h2>
+                    <p class="section-subtitle">View and manage all your transactions</p>
+                </div>
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="filter-category">Category</label>
+                        <select id="filter-category">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-type">Type</label>
+                        <select id="filter-type">
+                            <option value="">All Types</option>
+                            <option value="Income">Income</option>
+                            <option value="Expense">Expense</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div id="transactions-list"></div>
+            
+            <div class="delete-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-trash-alt"></i> Delete Transaction</h3>
+                    <span class="section-subtitle">Remove incorrect or unwanted transactions</span>
+                </div>
+                <div class="delete-form">
+                    <div class="form-group">
+                        <label for="delete-transaction-select">Select Transaction</label>
+                        <select id="delete-transaction-select">
+                            <option value="">Choose a transaction to delete...</option>
+                        </select>
+                    </div>
+                    <button id="delete-btn" class="btn-danger">
+                        <i class="fas fa-trash"></i> Delete Transaction
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Advisor Tab -->
+        <div id="ai-advisor" class="tab-content">
+            <div class="ai-header">
+                <h2><i class="fas fa-robot"></i> AI Financial Advisor</h2>
+                <p>Get personalized financial advice based on your spending patterns!</p>
+            </div>
+
+            <div class="quick-analysis">
+                <h3>Quick Analysis</h3>
+                <div class="analysis-buttons">
+                    <button class="analysis-btn" data-analysis="spending">
+                        <i class="fas fa-chart-pie"></i> Spending Analysis
+                    </button>
+                    <button class="analysis-btn" data-analysis="budget">
+                        <i class="fas fa-calculator"></i> Budget Suggestions
+                    </button>
+                    <button class="analysis-btn" data-analysis="savings">
+                        <i class="fas fa-piggy-bank"></i> Savings Tips
+                    </button>
+                </div>
+                <div id="analysis-result"></div>
+            </div>
+
+            <div class="chat-container">
+                <h3>Chat with AI Advisor</h3>
+                <div id="chat-messages"></div>
+                <div class="chat-input">
+                    <input type="text" id="chat-input" placeholder="Ask me about your finances...">
+                    <button id="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Processing...</p>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

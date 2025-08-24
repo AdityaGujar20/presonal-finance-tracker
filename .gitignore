@@ -1,0 +1,4 @@
+.env
+finance_tracker.db
+
+__pycache__/
