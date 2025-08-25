@@ -166,17 +166,3 @@ pip install -r backend/requirements.txt
 ```bash
 pip install --user -r backend/requirements.txt
 ```
-
-## 🤝 Contributing
-
-This is a personal finance tracker designed for individual use. Feel free to fork and customize for your needs!
-
-## 📄 License
-
-MIT License - Feel free to use and modify as needed.
-
----
-
-**Built with ❤️ for personal financial wellness**
-
-*Track your money, understand your habits, achieve your goals.*
